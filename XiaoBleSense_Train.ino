@@ -136,18 +136,20 @@ void loop()
     u8x8.clear();
     u8x8.setFont(u8x8_font_amstrad_cpc_extended_r);
 
-    ei_printf("Sampling...\n");
-
     // u8x8.drawString(2, 3, "Sampling... 3");
     // u8x8.refreshDisplay();
     // delay(1000);
     u8x8.drawString(2, 3, "Sampling... 2");
+    ei_printf("Sampling... 2\n");
     u8x8.refreshDisplay();
     delay(1000);
     u8x8.drawString(2, 3, "Sampling... 1");
+    ei_printf("Sampling... 1\n");
     u8x8.refreshDisplay();
     delay(1000);
+    u8x8.clear();
     u8x8.drawString(2, 3, "Sampling...");
+    ei_printf("Sampling... 0\n");
     u8x8.refreshDisplay();
 
     // Allocate a buffer here for the values we'll read from the IMU
@@ -214,8 +216,12 @@ void loop()
 #endif
 
     u8x8.clear();
+    if (result.anomaly > 0.5)
+    {
+        printResultToDisp("anomaly", result.anomaly, WHITE);
+    }
     // idle
-    if (result.classification[0].value > 0.5)
+    else if (result.classification[0].value > 0.5)
     {
         printResultToDisp(result.classification[0], RED);
     }
@@ -228,15 +234,6 @@ void loop()
     else if (result.classification[2].value > 0.5)
     {
         printResultToDisp(result.classification[2], BLUE);
-    }
-    // // stop
-    // else if (result.classification[3].value > 0.5)
-    // {
-    //     printResultToDisp(result.classification[3], YELLOW);
-    // }
-    else if (result.anomaly > 0.5)
-    {
-        printResultToDisp("anomaly", result.anomaly, WHITE);
     }
     else
     {
