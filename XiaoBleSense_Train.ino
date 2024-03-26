@@ -79,6 +79,7 @@ enum RgbColor
     WHITE
 };
 
+void setRgbColor(uint8_t color);
 void printResultToDisp(ei_impulse_result_classification_t &classResult, uint8_t color);
 void printResultToDisp(const char *label, float value, uint8_t color);
 
@@ -108,6 +109,12 @@ void setup()
     }
 
     ei_printf("\nStarting inferencing in 2 seconds...\n");
+
+    u8x8.setFont(u8x8_font_amstrad_cpc_extended_r);
+    u8x8.drawString(1, 2, "Motion");
+    u8x8.drawString(1, 4, " Detection");
+    u8x8.drawString(1, 6, "  Demo");
+    u8x8.refreshDisplay();
     delay(2000);
 }
 
@@ -136,18 +143,14 @@ void loop()
     u8x8.clear();
     u8x8.setFont(u8x8_font_amstrad_cpc_extended_r);
 
-    // u8x8.drawString(2, 3, "Sampling... 3");
-    // u8x8.refreshDisplay();
-    // delay(1000);
-    u8x8.drawString(2, 3, "Sampling... 2");
+    u8x8.drawString(2, 3, "Sampling 2");
     ei_printf("Sampling... 2\n");
     u8x8.refreshDisplay();
     delay(1000);
-    u8x8.drawString(2, 3, "Sampling... 1");
+    u8x8.drawString(2, 3, "Sampling 1");
     ei_printf("Sampling... 1\n");
     u8x8.refreshDisplay();
     delay(1000);
-    u8x8.clear();
     u8x8.drawString(2, 3, "Sampling...");
     ei_printf("Sampling... 0\n");
     u8x8.refreshDisplay();
@@ -216,7 +219,7 @@ void loop()
 #endif
 
     u8x8.clear();
-    if (result.anomaly > 0.5)
+    if (result.anomaly > 0.6)
     {
         printResultToDisp("anomaly", result.anomaly, WHITE);
     }
@@ -242,12 +245,7 @@ void loop()
     delay(displayResultTimeMs);
 }
 
-void printResultToDisp(ei_impulse_result_classification_t &classResult, uint8_t color)
-{
-    printResultToDisp(classResult.label, classResult.value, color);
-}
-
-void printResultToDisp(const char *label, float value, uint8_t color)
+void setRgbColor(uint8_t color)
 {
     switch (color)
     {
@@ -292,9 +290,19 @@ void printResultToDisp(const char *label, float value, uint8_t color)
         default:
             break;
     }
+}
+
+void printResultToDisp(ei_impulse_result_classification_t &classResult, uint8_t color)
+{
+    printResultToDisp(classResult.label, classResult.value * 100.0, color);
+}
+
+void printResultToDisp(const char *label, float value, uint8_t color)
+{
+    setRgbColor(color);
 
     char numBuf[20] = {0};
-    snprintf(numBuf, 20, "%.2f%", value * 100.0);
+    snprintf(numBuf, 20, "%.2f%", value);
 
     u8x8.setFont(u8x8_font_amstrad_cpc_extended_r);
     u8x8.drawString(2, 3, label);
